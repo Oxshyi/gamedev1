@@ -5,6 +5,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
     private Rigidbody2D rb;
+    public bool isGrounded;  
     public float speed = 30;
     public float jumpForce = 2;
     public float x = 0;
@@ -17,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // CHECKING FOR IS GROUNDED
         x = Input.GetAxis("Horizontal");
         y = Input.GetAxis("Vertical"); 
         Vector2 dir = new Vector2(x, y);
