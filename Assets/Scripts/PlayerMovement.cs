@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
+    public bool isGrounded;  
     public float speed = 30;
     public const float JUMP_TIME_LIMIT = 3.0f;
     public float JUMP_FORCE = 10f;
@@ -14,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
+        // CHECKING FOR IS GROUNDED
         x = Input.GetAxis("Horizontal");
         y = Input.GetAxis("Vertical"); 
         Vector2 dir = new Vector2(x, y);

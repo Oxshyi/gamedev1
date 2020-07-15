@@ -16,20 +16,20 @@ public class ActionTimer
     }
     public static ActionTimer CreateInterval(Action action, float interval, string timerName = null){
         InitIfNeeded();
-        List<float> intervalList = new List<float>();
+        List<Action> intervalActionList = new List<Action>();
         GameObject gameObject = new GameObject("Action Interval Timer", typeof(MonoBehaviourHook));
-        ActionTimer actionTimer = new ActionTimer(action, interval, gameObject, timerName, intervalList);
+        ActionTimer actionTimer = new ActionTimer(action, interval, gameObject, timerName, intervalActionList);
         activeTimerList.Add(actionTimer);
         //Debug.Log(Time.time / interval);
        //actionTimer.PopulateIntervalList(interval);
         MonoBehaviourHook monoBehaviourHook = gameObject.GetComponent<MonoBehaviourHook>();
-        actionTimer.AppendTimeBetween(interval);
+        actionTimer.AppendAction(interval);
         monoBehaviourHook.interval = interval;
         monoBehaviourHook.onIntervalUpdate = actionTimer.Update;
 
-        for (int i = 0; i < intervalList.Count; i++)
+        for (int i = 0; i < intervalActionList.Count; i++)
         {
-            Debug.Log(intervalList[i]);
+            Debug.Log(intervalActionList[i]);
         }
 
      
@@ -72,18 +72,18 @@ public class ActionTimer
     Action OnTimerComplete;
     bool isComplete;
     string timerName;
-    List<float> intervalList;
+    List<Action> intervalActionList;
     float timer;
     private GameObject gameObject;
 
-    private ActionTimer(Action action, float interval,  GameObject gameObject, string timerName = null, List<float> intervalList = null){
+    private ActionTimer(Action action, float interval,  GameObject gameObject, string timerName = null, List<Action> intervalActionList = null){
         this.OnTimerComplete = action;
         this.timer = interval;
         this.timerName = timerName;
         this.isComplete = false;
         this.gameObject = gameObject;
-        if(intervalList != null)
-            this.intervalList = intervalList;
+        if(intervalActionList != null)
+            this.intervalActionList = intervalActionList;
     }
 
     void Update(){
@@ -96,31 +96,21 @@ public class ActionTimer
         }
     }
     void Update(float interval){
-        if(!isComplete && this.intervalList[this.intervalList.Count - 1] != -1f){
-            for(int i = 0; i < this.intervalList.Count; i++){                
-                if(Time.time == this.intervalList[i]){
-                    OnTimerComplete();
-                }else if(this.intervalList[i] >= Time.time){
-                    MarkComplete();
-                }
-            }   
-        }  
+        if(intervalActionList != null && intervalActionList.Count != -1){
+            for (int i = 0; i < intervalActionList.Count; i++)
+            {
+                intervalActionList[i].Invoke();
+            }
+        }
     } 
-    private void AppendTimeBetween(float interval){
+    private void AppendAction(float interval){
         if(!isComplete){
             float intervalTimer = interval -= Time.time;
-            bool isTimerReset = false;
-            if (intervalTimer > 0){
-                intervalList.Add(intervalTimer);
-                isTimerReset = true;
-                if (Time.time == intervalList[intervalList.Count - 1]){
-                    intervalTimer = -1;
-                    intervalList.Add(intervalTimer);
-                }                       
-            }else if(intervalList[intervalList.Count - 1] == -1 && isTimerReset){
-                interval = intervalTimer -= Time.time;
-                intervalList.Add(interval);
+            if (intervalTimer < 0){
+                intervalActionList.Add(OnTimerComplete);
+                intervalTimer = interval -= Time.time;
             }
+            
         }
     }
     private void MarkComplete(){
