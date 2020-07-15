@@ -340,10 +340,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1105790818}
-<<<<<<< HEAD
-  - component: {fileID: 1105790819}
-  - component: {fileID: 1105790821}
-  - component: {fileID: 1105790820}
 =======
   - component: {fileID: 1105790821}
 >>>>>>> 9300a5a0b9d3b4964d357cbb3a78ae1d9cd3e29b
